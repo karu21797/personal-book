@@ -7,6 +7,7 @@ public record GoogleBook(
         int totalItems,
         List<Item> items
 ) {
+
     public record Item(
             String id,
             String selfLink,

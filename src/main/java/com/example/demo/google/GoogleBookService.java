@@ -1,6 +1,8 @@
 package com.example.demo.google;
 
+
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -22,6 +24,21 @@ public class GoogleBookService {
                         .build())
                 .retrieve()
                 .body(GoogleBook.class);
+    }
+
+
+    public GoogleBook getBookById(String googleId) {
+        try {
+            return restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/volumes")
+                            .queryParam("q", googleId)
+                            .build())
+                    .retrieve()
+                    .body(GoogleBook.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
 

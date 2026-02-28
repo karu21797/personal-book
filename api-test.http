@@ -1,0 +1,12 @@
+### Get all books
+GET http://localhost:8080/books
+Accept: application/json
+
+### Search with pagination
+GET http://localhost:8080/google?q=java&maxResults=5&startIndex=10
+Accept: application/json
+
+### Save From GoogleBook to Book Entity
+POST http://localhost:8080/books/46NQAAAAMAAJ
+Content-Type: application/json
+
