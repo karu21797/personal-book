@@ -1,14 +1,20 @@
-package com.example.demo;
+package com.example.demo.controller;
 
+import com.example.demo.service.BookService;
 import com.example.demo.db.Book;
-import com.example.demo.db.BookRepository;
+import com.example.demo.db.repository.BookRepository;
 import com.example.demo.google.GoogleBook;
 import com.example.demo.google.GoogleBookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
-
+/**
+ * REST controller exposing endpoints for book operations.
+ *
+ * <p>Handles HTTP requests and delegates business logic
+ * to {@link BookService}.
+ */
 @RestController
 public class BookController {
     private final BookRepository bookRepository;

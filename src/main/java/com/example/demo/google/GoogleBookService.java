@@ -5,7 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-
+/**
+ * Service responsible for interacting with the external Google Books API.
+ *
+ * <p>This service uses Spring's {@link RestClient} to perform HTTP requests
+ * and fetch book data from Google.
+ */
 @Service
 public class GoogleBookService {
     private final RestClient restClient;

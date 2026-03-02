@@ -33,3 +33,13 @@ public record GoogleBook(
             String infoLink
     ) {}
 }
+/**
+ * Represents the response received from the Google Books API.
+ *
+ * <p>This record mirrors the JSON structure returned by:
+ * https://www.googleapis.com/books/v1/volumes
+ *
+ * <p>It contains metadata such as total results and a list of book items.
+ */
+
+

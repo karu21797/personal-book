@@ -1,7 +1,7 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import com.example.demo.db.Book;
-import com.example.demo.db.BookRepository;
+import com.example.demo.db.repository.BookRepository;
 import com.example.demo.google.GoogleBook;
 import com.example.demo.google.GoogleBookService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,15 +21,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
-
+/**
+ * Unit tests for {@code BookController}.
+ *
+ * <p>
+ * This test class verifies the behavior of REST endpoints exposed by
+ * the BookController. It focuses only on the web layer and ensures:
+ * </p>
+ *
+ * @author Karunya L
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 class BookControllerTests {
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private WebApplicationContext context;
     @Autowired
     private BookRepository bookRepository;
     @MockitoBean
