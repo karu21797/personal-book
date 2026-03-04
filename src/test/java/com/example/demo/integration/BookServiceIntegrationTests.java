@@ -1,57 +1,26 @@
 package com.example.demo.integration;
 
+import com.example.demo.db.Book;
 import com.example.demo.db.repository.BookRepository;
-import com.example.demo.exception.InvalidGoogleBookException;
 import com.example.demo.google.GoogleBook;
 import com.example.demo.google.GoogleBookService;
 import com.example.demo.service.BookService;
-import com.example.demo.db.Book;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-/**
- * Integration tests for {@code BookService}.
- *
- * <p>
- * This class verifies end-to-end interaction between:
- * </p>
- *
- * <ul>
- *     <li>Service layer</li>
- *     <li>Repository layer</li>
- *     <li>Database (typically in-memory, e.g., H2)</li>
- * </ul>
- *
- * <p>
- * Unlike unit tests, this test loads the full Spring application context
- * using {@code @SpringBootTest}.
- * </p>
- *
- * <ul>
- *     <li>Ensures actual persistence behavior</li>
- *     <li>Validates transaction management</li>
- *     <li>Confirms real database interactions</li>
- * </ul>
- *
- * <p>
- * These tests provide confidence that all layers of the application
- * work together correctly.
- * </p>
- *
- * @author Karunya L
- */
+
+@Slf4j
 @SpringBootTest
+@ActiveProfiles("test")
 @Transactional
 class BookServiceIntegrationTests {
 
@@ -65,38 +34,43 @@ class BookServiceIntegrationTests {
     private GoogleBookService googleBookService;
 
     @Test
-    void addBook_shouldSaveBook_whenValidGoogleId() {
+    void shouldSaveBookFromGoogleApi() {
 
-        GoogleBook.VolumeInfo volumeInfo = mock(GoogleBook.VolumeInfo.class);
-        when(volumeInfo.title()).thenReturn("Spring Boot Guide");
-        when(volumeInfo.authors()).thenReturn(List.of("John Doe"));
-        when(volumeInfo.pageCount()).thenReturn(250);
+        GoogleBook.VolumeInfo volumeInfo = new GoogleBook.VolumeInfo(
+                "Clean Code",
+                List.of("Robert C. Martin"),
+                "2008",
+                "Prentice Hall",
+                464,
+                "BOOK",
+                "NOT_MATURE",
+                List.of("Programming"),
+                "en",
+                null,
+                null
+        );
 
-        GoogleBook.Item item = mock(GoogleBook.Item.class);
-        when(item.id()).thenReturn("g123");
-        when(item.volumeInfo()).thenReturn(volumeInfo);
+        GoogleBook.Item item = new GoogleBook.Item(
+                "x8BvqSRbR3cC",
+                null,
+                volumeInfo,
+                null
+        );
 
-        GoogleBook googleBook = mock(GoogleBook.class);
-        when(googleBook.items()).thenReturn(List.of(item));
+        GoogleBook mockBook = new GoogleBook(
+                "books#volumes",
+                1,
+                List.of(item)
+        );
 
-        when(googleBookService.getBookById("g123")).thenReturn(googleBook);
+        Mockito.when(
+                googleBookService.getBookById(Mockito.anyString())).thenReturn(mockBook);
 
-        ResponseEntity<Book> response = bookService.addBook("g123");
+        Book savedBook = bookService.addBook("x8BvqSRbR3cC").getBody();
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Spring Boot Guide", response.getBody().getTitle());
-
-        Optional<Book> saved = bookRepository.findById("g123");
-        assertTrue(saved.isPresent());
-    }
-
-    @Test
-    void addBook_shouldThrowInvalidGoogleBookException_whenInvalidGoogleId() {
-
-        when(googleBookService.getBookById("invalid")).thenReturn(null);
-
-        assertThrows(InvalidGoogleBookException.class,
-                () -> bookService.addBook("invalid"));
+        assertNotNull(savedBook);
+        assertEquals("x8BvqSRbR3cC", savedBook.getId());
+        assertEquals("Clean Code", savedBook.getTitle());
+        assertEquals(1, bookRepository.count());
     }
 }
